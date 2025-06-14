@@ -1,5 +1,6 @@
 <template>
   <div>
+     
     <section class="news-section">
       <div class="section-title">Новости</div>
       <div class="news-slider">
@@ -9,6 +10,7 @@
              :class="{ active: currentSlide === index }">
           <div class="news-block">
             <div class="news-content">
+              <img :src="slide.image" :alt="slide.title" class="news-image">
               <h3>{{ slide.title }}</h3>
               <p>{{ slide.description }}</p>
             </div>
@@ -226,6 +228,14 @@ const formatDate = (date) => {
 .news-content {
   max-width: 800px;
   text-align: center;
+}
+
+.news-image {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 20px;
 }
 
 .news-content h3 {

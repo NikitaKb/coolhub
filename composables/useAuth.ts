@@ -1,5 +1,15 @@
 import { ref } from 'vue'
 
+interface AuthResponse {
+  success: boolean;
+  message?: string;
+  user?: {
+    id: number;
+    name: string;
+    email: string;
+  };
+}
+
 export function useAuth() {
   const user = useState<any>('auth-user', () => null)
   const isAuthenticated = useState<boolean>('auth-is-authenticated', () => false)
@@ -10,7 +20,7 @@ export function useAuth() {
   const checkAuth = async () => {
     loading.value = true
     try {
-      const res = await $fetch('/api/user/profile')
+      const res = await $fetch<AuthResponse>('/api/user/profile')
       if (res.success) {
         user.value = res.user
         isAuthenticated.value = true
@@ -30,7 +40,7 @@ export function useAuth() {
     error.value = ''
     loading.value = true
     try {
-      const res = await $fetch('/api/auth/register', {
+      const res = await $fetch<AuthResponse>('/api/auth/register', {
         method: 'POST',
         body: { name, email, password }
       })
@@ -38,8 +48,8 @@ export function useAuth() {
         await login(email, password)
         return { success: true }
       } else {
-        error.value = res.message
-        return { success: false, message: res.message }
+        error.value = res.message || 'Ошибка регистрации'
+        return { success: false, message: error.value }
       }
     } catch (e) {
       error.value = 'Ошибка регистрации'
@@ -54,7 +64,7 @@ export function useAuth() {
     error.value = ''
     loading.value = true
     try {
-      const res = await $fetch('/api/auth/login', {
+      const res = await $fetch<AuthResponse>('/api/auth/login', {
         method: 'POST',
         body: { email, password }
       })
@@ -62,8 +72,8 @@ export function useAuth() {
         await checkAuth()
         return { success: true }
       } else {
-        error.value = res.message
-        return { success: false, message: res.message }
+        error.value = res.message || 'Ошибка входа'
+        return { success: false, message: error.value }
       }
     } catch (e) {
       error.value = 'Ошибка входа'
@@ -73,12 +83,40 @@ export function useAuth() {
     }
   }
 
-  // Выход (очистка cookie на клиенте не требуется, просто сбрасываем состояние)
+  // Выход
   const logout = async () => {
-    user.value = null
-    isAuthenticated.value = false
-    // Можно добавить API для выхода, если потребуется
+    try {
+      await $fetch<AuthResponse>('/api/auth/logout', { method: 'POST' })
+      user.value = null
+      isAuthenticated.value = false
+    } catch (error) {
+      console.error('Error during logout:', error)
+    }
   }
 
-  return { user, isAuthenticated, loading, error, checkAuth, register, login, logout }
+  const updateUser = async (userData: any) => {
+    try {
+      loading.value = true
+      error.value = ''
+      const response = await $fetch<AuthResponse>('/api/user/profile', {
+        method: 'PUT',
+        body: userData
+      })
+      if (response.success) {
+        user.value = response.user
+        return true
+      } else {
+        error.value = response.message || 'Ошибка при обновлении профиля'
+        return false
+      }
+    } catch (err) {
+      console.error('Profile update error:', err)
+      error.value = 'Ошибка при обновлении профиля'
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
+  return { user, isAuthenticated, loading, error, checkAuth, register, login, logout, updateUser }
 } 
