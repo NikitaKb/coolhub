@@ -77,7 +77,7 @@ const toggleMode = () => {
 .auth-form h2 {
   margin: 0 0 1.5rem;
   text-align: center;
-  color: #333;
+  color: var(--main-blue-dark);
 }
 .form-group {
   margin-bottom: 1rem;
@@ -85,7 +85,7 @@ const toggleMode = () => {
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  color: #666;
+  color: var(--main-text);
 }
 .form-group input {
   width: 100%;
@@ -97,7 +97,7 @@ const toggleMode = () => {
 .form-group input:focus {
   outline: none;
   border-color: var(--main-blue);
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
+  box-shadow: 0 0 0 2px rgba(var(--main-blue-rgb), 0.15);
 }
 .btn {
   width: 100%;
@@ -113,21 +113,21 @@ const toggleMode = () => {
   cursor: not-allowed;
 }
 .btn-primary {
-  background-color: #007bff;
-  color: white;
+  background-color: var(--main-blue);
+  color: var(--main-white);
 }
 .btn-primary:hover:not(:disabled) {
-  background-color: #0056b3;
+  background-color: var(--main-blue-dark);
 }
 .btn-link {
   background: none;
-  color: #007bff;
+  color: var(--main-blue);
   text-decoration: underline;
   padding: 0;
   margin-top: 1rem;
 }
 .btn-link:hover {
-  color: #0056b3;
+  color: var(--main-blue-dark);
 }
 .auth-switch {
   margin-top: 1rem;
